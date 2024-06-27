@@ -108,6 +108,7 @@ app.layout = html.Div([
             #style = {'display': 'none'},
             id="btn_selection_row", 
     ),
+    
     dbc.Row(
             [
                 dbc.Col(
