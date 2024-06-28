@@ -5,11 +5,9 @@ import json
 from dash.exceptions import PreventUpdate
 import plotly.graph_objects as go
 from io import StringIO
+from scipy import signal
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-id_vect=[0,-10,-20,-30,-40,-50,-60]
-iq_vect=[10,20,30,40,50,60,70]
 
 speed_values=[0,103,206,309,412,515,618,721,824,927,1030,1133,1236,1339,1442,1545,1648,1751,1854,1957,2060,2163,2266,2369,2472,2575,2678,2781,2884,2987,3090,3193,3296,3399,3502,3605,3708,3811,3914,4017,4120,4223,4326,4429,4532,4635,4738,4841,4944,5047,5150,5253,5356,5459,5562,5665,5768,5871,5974,6077,6180,6283,6386,6489]
 columns = (
@@ -17,11 +15,15 @@ columns = (
             [{'id': str(speed), 'name': str(speed),'type': 'numeric'} for speed in speed_values]
         )
 torque_vect=[0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,124,128,132,136,140,144,148,152,156,160,164,168,172,176,180,184,188,192,196,200,204,208,212,216,220,224,228,232,236,240,244,248,252]
-data=[{"Torque":torque} for torque in torque_vect]
-
+initial_torques=[{"Torque":torque} for torque in torque_vect]
+initial_speeds={"Bins":"Speed values"}
+torque_speed={"Bins":"Max Torque values"}
+for i in range(64):
+    initial_speeds[i] = None
+    
 __FIRSTROW_HEIGHT__ = 5000
 
-def discrete_background_color_bins(df, n_bins=9, columns='all'):
+def discrete_background_color_bins(df, df_speedLimit, n_bins=9, columns='all'):
     import colorlover
     bounds = [i * (1.0 / n_bins) for i in range(n_bins + 1)]
     if columns == 'all':
@@ -57,6 +59,15 @@ def discrete_background_color_bins(df, n_bins=9, columns='all'):
                 'backgroundColor': backgroundColor,
                 'color': color
             })
+            # this is tooo slow
+            # for k,row in enumerate(df[column].index.values):
+            #     styles.append({
+            #     'if': {
+            #         'filter_query': str(row)+' > ' + str(df_speedLimit.iloc[1,k+1]),
+            #     },
+            #     'backgroundColor': 'grey',
+            #     'color': color
+            # })
         legend.append(
             html.Div(style={'display': 'inline-block', 'width': '60px'}, children=[
                 html.Div(
@@ -75,59 +86,69 @@ def discrete_background_color_bins(df, n_bins=9, columns='all'):
 
         
 app.layout = html.Div([
-    dcc.Store(id="intermediate_value"),
+    dcc.Store(id="maintable_data"),    
+    dcc.Store(id="torquespeedlimittable_data"),    
     dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.Div(
-                                [
-                                    dbc.Button("+", id="btn_incr_offset", color="primary", n_clicks=0,className='col-12'),
-                                ],
-                                className="col-4", 
+                        dash_table.DataTable(
+                            id='speed-editing-simple',
+                            columns=(
+                                [{'id': 'Bins', 'name': 'Bins','type': 'text'}] +
+                                [{'id': str(i), 'name': str(i),'type': 'numeric'} for i in range(64)]
+                            ),
+                            data=[initial_speeds,torque_speed],
+                            editable=True,
+                            fill_width=True,
+                            style_table={'overflowX': 'scroll','overflowY': 'scroll'},
+                            merge_duplicate_headers=True
                         ),
-                        html.Div(
-                                [
-                                    dbc.Button("-", id="btn_decr_offset", color="primary", n_clicks=0,className='col-12'),
-                                ],
-                                className="col-4", 
+                        
+                        dbc.Row(
+                            [
+
+                                html.Div(
+                                        [
+                                            dbc.Button("+", id="btn_incr_offset", color="primary", n_clicks=0,className='col-12',disabled=True),
+                                        ],
+                                        className="col-4", 
+                                ),
+                                html.Div(
+                                        [
+                                            dbc.Button("-", id="btn_decr_offset", color="primary", n_clicks=0,className='col-12',disabled=True),
+                                        ],
+                                        className="col-4", 
+                                ),
+                                html.Div(
+                                        [
+                                            dbc.Button("Reset selection", id="btn_deselect", color="primary", n_clicks=0,className='col-12',disabled=True),
+                                        ],
+                                        className="col-4", 
+                                ),
+
+                            ],
+                            style = {'display': 'none'},
+                            id="btn_selection_row", 
                         ),
-                        html.Div(
-                                [
-                                    dbc.Button("Reset selection", id="btn_deselect", color="primary", n_clicks=0,className='col-12'),
-                                ],
-                                className="col-4", 
+                        
+                        dash_table.DataTable(
+                            id='table-editing-simple',
+                            columns=columns,
+                            data=initial_torques,
+
+                            #filter_action='native',
+                            editable=True,
+                            #row_selectable="multi",
+                            #column_selectable="multi",
+                            selected_rows=[],
+                            export_format='xlsx',
+                            export_headers='display',
+                            fill_width=True,
+                            style_table={'overflowX': 'scroll','overflowY': 'scroll'},
+                            merge_duplicate_headers=True
                         ),
                     ],
-                    width=8,
-                    className='row col-8'
-                ),
-                
-                
-            ],
-            #style = {'display': 'none'},
-            id="btn_selection_row", 
-    ),
-    
-    dbc.Row(
-            [
-                dbc.Col(
-                    dash_table.DataTable(
-                        id='table-editing-simple',
-                        columns=columns,
-                        data=data,
-
-                        #filter_action='native',
-                        editable=True,
-                        #row_selectable="multi",
-                        #column_selectable="multi",
-                        selected_rows=[],
-                        export_format='xlsx',
-                        export_headers='display',
-                        fill_width=True,
-                        style_table={'overflowX': 'scroll','overflowY': 'scroll'},
-                        merge_duplicate_headers=True
-                    ),
                     width=8,
                 ),
                 dbc.Col(dcc.Graph(id='3Dplot',figure={}),width=4),
@@ -146,8 +167,27 @@ app.layout = html.Div([
         ),
 ])
 
-
-
+@callback(
+    [
+        Output('table-editing-simple', 'columns'),
+        Output("torquespeedlimittable_data", 'data'),
+    ],
+    [Input('speed-editing-simple', 'data'),],
+    [
+        State('speed-editing-simple', 'columns'),
+    ],
+    prevent_initial_call=True,
+    )
+def update_speedValues(rows, columns):
+    df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+    if not df.isnull().values.any():
+        cols = (
+                [{'id': 'Torque', 'name': 'Torque','type': 'numeric'}] +
+                [{'id': str(speed), 'name': str(speed),'type': 'numeric'} for speed in df.values[0][1:]]
+            )
+        return (cols,df.to_json())
+    else:
+        raise PreventUpdate
 
 
 @callback(
@@ -156,29 +196,49 @@ app.layout = html.Div([
         Output('IsoTplot', 'figure'),
         Output('IsoWplot', 'figure'),
         Output('table-editing-simple', 'style_data_conditional'),
-        Output("intermediate_value", 'data'),
+        Output("maintable_data", 'data'),
+        Output("btn_selection_row","style")
     ],
     [Input('table-editing-simple', 'data'),],
     [
         State('table-editing-simple', 'columns'),
+        State("torquespeedlimittable_data", 'data'),
     ],
     prevent_initial_call=True,
     )
-def display_output(rows, columns):
+def display_output(rows, columns, torquespeedLimit):
     df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
     df.set_index("Torque",inplace=True)
     fig3D={}
-    styles={}
+    figIsoT={}
+    figIsoW={}
+    styles=[{},]
+    buttons_row = {'display': 'none'}
+    
+    # filter 1 z=df.rolling(window=5).mean().values
+    try:
+        df_speedLimit=pd.read_json(StringIO(torquespeedLimit))
+    except:
+        df_speedLimit=None
+    
     if not df.isnull().values.any():
         fig3D = go.Figure(
             data=[go.Surface(z=df.values, 
                             y=[int(value) for value in df.index.values], 
                             x=[int(value) for value in df.columns[1:]],
-                            hovertemplate = 'Speed: %{x:.0f} rpm - Torque: %{y:.0f} Nm<extra></extra>',
+                            hovertemplate = 'Speed: %{x:.0f} rpm - Torque: %{y:.0f} Nm - Current: %{z:.0f} A<extra></extra>',
                             colorscale ='Blues',
                             ),
                 ]
         )
+        # fig3D.add_trace(go.Surface(z=signal.savgol_filter(df.values,53,3), 
+        #                     y=[int(value) for value in df.index.values], 
+        #                     x=[int(value) for value in df.columns[1:]],
+        #                     hovertemplate = 'Speed: %{x:.0f} rpm - Torque: %{y:.0f} Nm<extra></extra>',
+        #                     colorscale ='Blues',
+        #                     ),
+        # )
+            
         fig3D.update_traces(showscale=False)
         fig3D.update_layout(title='3D plot',
                         #width=1500, height=1500,
@@ -217,9 +277,10 @@ def display_output(rows, columns):
                         showlegend=True,
                         xaxis_title="Torque [Nm]",)
         
-        (styles, legend) = discrete_background_color_bins(df)
+        (styles, legend) = discrete_background_color_bins(df,df_speedLimit)
+        buttons_row = {'display': 'flex'}
 
-    return (fig3D,figIsoT,figIsoW,styles,df.to_json())
+    return (fig3D,figIsoT,figIsoW,styles,df.to_json(),buttons_row)
 
 @callback(
     Output('table-editing-simple', 'derived_virtual_selected_row_ids'),
@@ -247,8 +308,11 @@ def selectedPointOn3D(points):
     
 @callback(
     Output('3Dplot', 'figure',allow_duplicate=True),
+    Output('btn_incr_offset','disabled'),
+    Output('btn_decr_offset','disabled'),
+    Output('btn_deselect','disabled'),
     Input('table-editing-simple', 'selected_cells'),
-    State("intermediate_value", 'data'),
+    State("maintable_data", 'data'),
     State("3Dplot", 'figure'),
     prevent_initial_call=True,
 )
@@ -256,6 +320,13 @@ def selectedPointOnTable(points,data,figuredata):
     if figuredata:
         if len(figuredata['data'])>1: # if there are some points highlighted, remove them
             figuredata['data']=[figuredata['data'][0],]
+        fig3D = go.Figure(**figuredata)
+    else:
+        fig3D = {}
+    btn_incr_offset_disabled = True
+    btn_decr_offset_disabled = True
+    btn_deselect_disabled = True
+    
     if points:
         Xcoordinates=[]
         Ycoordinates=[]
@@ -277,11 +348,14 @@ def selectedPointOnTable(points,data,figuredata):
                                                     marker_size = 10,
                                                     mode='markers'),)
             fig3D = go.Figure(**figuredata)
-            return fig3D
+            btn_incr_offset_disabled = False
+            btn_decr_offset_disabled = False
+            btn_deselect_disabled = False
+            return fig3D,btn_incr_offset_disabled,btn_decr_offset_disabled,btn_deselect_disabled
             
         raise PreventUpdate
     else:
-        raise PreventUpdate
+        return fig3D,btn_incr_offset_disabled,btn_decr_offset_disabled,btn_deselect_disabled
 
 # This callback highlights in red the point in the table corresponding to the clicked one on the 3D figure
 # @callback(
