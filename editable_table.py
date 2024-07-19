@@ -305,7 +305,41 @@ def selectedPointOn3D(points):
 #         pass
 #     else:
 #         pass
+
+@callback(
+    Output('table-editing-simple', 'data'),
+    State('table-editing-simple', 'selected_cells'),
+    State('table-editing-simple', 'data'),
+    Input("btn_incr_offset", 'n_clicks'),
+    prevent_initial_call=True,
+)
+def increaseSelectedPoints(points,data,btn):
+    if data:        
+        for point in points:
+            try:
+                data[point['row']][point['column_id']] += 1
+            except:
+                pass
     
+    return data
+
+@callback(
+    Output('table-editing-simple', 'data'),
+    State('table-editing-simple', 'selected_cells'),
+    State('table-editing-simple', 'data'),
+    Input("btn_decr_offset", 'n_clicks'),
+    prevent_initial_call=True,
+)
+def decreaseSelectedPoints(points,data,btn):
+    if data:        
+        for point in points:
+            try:
+                data[point['row']][point['column_id']] -= 1
+            except:
+                pass
+    
+    return data
+
 @callback(
     Output('3Dplot', 'figure',allow_duplicate=True),
     Output('btn_incr_offset','disabled'),
