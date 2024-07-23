@@ -307,7 +307,7 @@ def selectedPointOn3D(points):
 #         pass
 
 @callback(
-    Output('table-editing-simple', 'data'),
+    Output('table-editing-simple', 'data',allow_duplicate=True),
     State('table-editing-simple', 'selected_cells'),
     State('table-editing-simple', 'data'),
     Input("btn_incr_offset", 'n_clicks'),
