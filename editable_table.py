@@ -149,9 +149,9 @@ app.layout = html.Div([
                             merge_duplicate_headers=True
                         ),
                     ],
-                    width=8,
+                    width=12,
                 ),
-                dbc.Col(dcc.Graph(id='3Dplot',figure={}),width=4),
+                #dbc.Col(dcc.Graph(id='3Dplot',figure={}),width=4),
             ],
             style={
                     'maxHeight': str(__FIRSTROW_HEIGHT__)+'px',
@@ -164,6 +164,9 @@ app.layout = html.Div([
         ),
     dbc.Row(
             [dcc.Graph(id='IsoWplot',figure={}),]
+        ),
+    dbc.Row(
+            [dcc.Graph(id='3Dplot',figure={}),]
         ),
 ])
 

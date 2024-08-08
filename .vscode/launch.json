@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "editable_table",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "C:\\Users\\MikelZabaleta\\Github\\Dash examples\\editable_table.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "speed_degradation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "C:\\Users\\MikelZabaleta\\Github\\Dash examples\\speed_degradation.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "mdf_viewer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "C:\\Users\\MikelZabaleta\\Github\\Dash examples\\mdf_viewer.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
