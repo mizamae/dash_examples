@@ -35,6 +35,7 @@ app.layout = html.Div([
                             ),
         ],
     ),
+    html.Hr(),
     dbc.Row(
             [   
                 dbc.Col(
@@ -118,6 +119,8 @@ def update_speedValues(rows, columns, pp, speedLim, ovspeed_fac):
         )
         figTmax.update_layout(title='Torque vs speed',
                         showlegend=True,
+                        height= 800,  # px
+                        yaxis_title="Torque [Nm]",
                         xaxis_title="Speed [rpm]",)
         
         return [figTmax,]
@@ -125,4 +128,4 @@ def update_speedValues(rows, columns, pp, speedLim, ovspeed_fac):
         raise PreventUpdate
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run_server(port=8888,debug=True)

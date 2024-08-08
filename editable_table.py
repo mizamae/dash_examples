@@ -412,4 +412,4 @@ def selectedPointOnTable(points,data,figuredata):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run_server(port=9999,debug=True)
