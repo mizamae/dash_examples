@@ -20,7 +20,7 @@ __APP_ID__ = "speed_degradation"
 app.layout = html.Div([
     dbc.Row(
         [
-            html.Div([dbc.Label("Set the maximum torque-speed envelope"),],className="col-md-6"),
+            html.Div([html.H3("Set the maximum torque-speed envelope"),],className="col-md-6"),
             dash_table.DataTable(
                                 id='speed-editing-simple',
                                 columns=(
