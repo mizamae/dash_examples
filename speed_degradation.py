@@ -127,5 +127,7 @@ def update_speedValues(rows, columns, pp, speedLim, ovspeed_fac):
     else:
         raise PreventUpdate
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run_server(port=8888,debug=True)
+else:
+    server = app.server
