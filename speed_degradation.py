@@ -9,7 +9,8 @@ import numpy as np
 import math
 
 # add this for production
-app = Dash(url_base_pathname="/customerportal.nx-tech.com/",
+app = Dash(routes_pathname_prefix="/",
+           requests_pathname_prefix="/",
            serve_locally=True,
            external_stylesheets=[dbc.themes.BOOTSTRAP])
 #app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
