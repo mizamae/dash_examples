@@ -9,7 +9,7 @@ import numpy as np
 import math
 
 # add this for production
-app = Dash(url_base_pathname="customerportal.nx-tech.com/externalapps/iframe1/",external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(url_base_pathname="/customerportal.nx-tech.com/externalapps/iframe1/",external_stylesheets=[dbc.themes.BOOTSTRAP])
 #app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 initial_speeds={"Bins":"Speed values [rpm]"}
 initial_torques={"Bins":"Max Torque values [Nm]"}
