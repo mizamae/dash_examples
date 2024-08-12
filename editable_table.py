@@ -189,7 +189,7 @@ def update_speedValues(rows, columns):
     if not df.isnull().values.any():
         cols = (
                 [{'id': 'Torque', 'name': 'Torque','type': 'numeric'}] +
-                [{'id': str(speed), 'name': str(speed),'type': 'numeric'} for speed in df.values[0][1:]]
+                [{'id': str(int(speed)), 'name': str(int(speed)),'type': 'numeric'} for speed in df.values[0][1:]]
             )
         return (cols,df.to_json())
     else:
