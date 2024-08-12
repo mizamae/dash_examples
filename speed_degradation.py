@@ -10,7 +10,7 @@ import math
 
 # add this for production
 app = Dash(
-           url_base_pathname="/customerportal.nx-tech.com/externalapps/iframe1/",
+           url_base_pathname="/externalapps/iframe1/",
            serve_locally=True,
            external_stylesheets=[dbc.themes.BOOTSTRAP])
 #app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])

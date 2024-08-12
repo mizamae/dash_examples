@@ -8,7 +8,7 @@ from io import StringIO
 from scipy import signal
 
 app = Dash(
-           url_base_pathname="/customerportal.nx-tech.com/externalapps/iframe2/",
+           url_base_pathname="/externalapps/iframe2/",
            serve_locally=True,
            external_stylesheets=[dbc.themes.BOOTSTRAP])
 
