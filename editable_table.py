@@ -7,7 +7,10 @@ import plotly.graph_objects as go
 from io import StringIO
 from scipy import signal
 
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(
+           url_base_pathname="/customerportal.nx-tech.com/externalapps/iframe2/",
+           serve_locally=True,
+           external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 speed_values=[0,103,206,309,412,515,618,721,824,927,1030,1133,1236,1339,1442,1545,1648,1751,1854,1957,2060,2163,2266,2369,2472,2575,2678,2781,2884,2987,3090,3193,3296,3399,3502,3605,3708,3811,3914,4017,4120,4223,4326,4429,4532,4635,4738,4841,4944,5047,5150,5253,5356,5459,5562,5665,5768,5871,5974,6077,6180,6283,6386,6489]
 columns = (
@@ -411,5 +414,7 @@ def selectedPointOnTable(points,data,figuredata):
 
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run_server(port=9999,debug=True)
+else:
+    server = app.server
