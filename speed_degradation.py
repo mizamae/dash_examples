@@ -9,8 +9,8 @@ import numpy as np
 import math
 
 # add this for production
-app = Dash(routes_pathname_prefix="/",
-           requests_pathname_prefix="/",
+app = Dash(
+           url_base_pathname="/customerportal.nx-tech.com/externalapps/iframe1/",assets_external_path="/customerportal.nx-tech.com/externalapps/iframe1/",
            serve_locally=True,
            external_stylesheets=[dbc.themes.BOOTSTRAP])
 #app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
