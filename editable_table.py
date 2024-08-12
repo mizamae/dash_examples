@@ -93,6 +93,7 @@ app.layout = html.Div([
     dcc.Store(id="torquespeedlimittable_data"),    
     dbc.Row(
             [
+                html.Div([html.H3("Enter the torque-speed envelope"),],className="col-md-6"),
                 dbc.Col(
                     [
                         dash_table.DataTable(
